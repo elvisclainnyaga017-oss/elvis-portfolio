@@ -81,7 +81,6 @@ if (themeToggle) {
         const isLight =
             document.body.classList.contains("light");
 
-
         if (isLight) {
 
             applyTheme("dark");
@@ -118,7 +117,6 @@ if (menuToggle && navLinks) {
         const isOpen =
             navLinks.classList.toggle("active");
 
-
         menuToggle.setAttribute(
             "aria-expanded",
             String(isOpen)
@@ -126,10 +124,8 @@ if (menuToggle && navLinks) {
 
     });
 
-
     const navigationItems =
         navLinks.querySelectorAll("a");
-
 
     navigationItems.forEach((link) => {
 
@@ -160,7 +156,6 @@ async function loadProfile() {
         const response =
             await fetch("/api/profile");
 
-
         if (!response.ok) {
 
             throw new Error(
@@ -169,10 +164,8 @@ async function loadProfile() {
 
         }
 
-
         const result =
             await response.json();
-
 
         if (
             !result.success ||
@@ -184,7 +177,6 @@ async function loadProfile() {
             );
 
         }
-
 
         const profile =
             result.profile;
@@ -229,12 +221,10 @@ async function loadProfile() {
         const heroName =
             document.querySelector(".hero-intro h1");
 
-
         if (heroName && fullName) {
 
             const nameParts =
                 fullName.trim().split(/\s+/);
-
 
             if (nameParts.length >= 3) {
 
@@ -260,7 +250,6 @@ async function loadProfile() {
                 ".hero-intro .eyebrow"
             );
 
-
         if (
             heroEyebrow &&
             professionalTitle
@@ -280,7 +269,6 @@ async function loadProfile() {
             document.querySelector(
                 ".hero-intro .hero-description"
             );
-
 
         if (
             heroDescription &&
@@ -302,7 +290,6 @@ async function loadProfile() {
                 ".about-content .large-text"
             );
 
-
         if (
             aboutLargeText &&
             shortBio
@@ -323,7 +310,6 @@ async function loadProfile() {
                 ".about-details"
             );
 
-
         if (
             aboutDetails &&
             location
@@ -332,14 +318,12 @@ async function loadProfile() {
             const detailBlocks =
                 aboutDetails.children;
 
-
             if (detailBlocks.length > 0) {
 
                 const locationValue =
                     detailBlocks[0].querySelector(
                         "strong"
                     );
-
 
                 if (locationValue) {
 
@@ -361,7 +345,6 @@ async function loadProfile() {
             document.querySelector(
                 ".hero-profile-frame img"
             );
-
 
         if (
             profileImageElement &&
@@ -387,7 +370,6 @@ async function loadProfile() {
                 ".hero-profile-caption span"
             );
 
-
         if (
             profileCaption &&
             fullName
@@ -403,7 +385,6 @@ async function loadProfile() {
             document.querySelector(
                 ".hero-profile-caption small"
             );
-
 
         if (
             profileCaptionTitle &&
@@ -424,7 +405,6 @@ async function loadProfile() {
             document.querySelectorAll(
                 'a[href^="mailto:"]'
             );
-
 
         emailLinks.forEach((link) => {
 
@@ -449,7 +429,6 @@ async function loadProfile() {
             document.querySelectorAll(
                 'a[href*="github.com"]'
             );
-
 
         githubLinks.forEach((link) => {
 
@@ -477,7 +456,6 @@ async function loadProfile() {
             document.querySelectorAll(
                 'a[href*="linkedin.com"], .footer-socials a:nth-child(2)'
             );
-
 
         linkedinLinks.forEach((link) => {
 
@@ -507,7 +485,6 @@ async function loadProfile() {
                 document.querySelectorAll(
                     'a[href*="resume"], a[data-resume]'
                 );
-
 
             resumeLinks.forEach((link) => {
 
@@ -552,12 +529,10 @@ async function loadProjects() {
         return;
     }
 
-
     try {
 
         const response =
             await fetch("/api/projects");
-
 
         if (!response.ok) {
 
@@ -567,10 +542,8 @@ async function loadProjects() {
 
         }
 
-
         const result =
             await response.json();
-
 
         if (!result.success) {
 
@@ -580,7 +553,6 @@ async function loadProjects() {
             );
 
         }
-
 
         const projects =
             result.projects || [];
@@ -598,9 +570,7 @@ async function loadProjects() {
         // ----------------------------------------------------
 
         if (projects.length === 0) {
-
             return;
-
         }
 
 
@@ -613,10 +583,8 @@ async function loadProjects() {
             const projectCard =
                 document.createElement("article");
 
-
             projectCard.className =
                 "project-card";
-
 
             if (
                 Number(project.featured) === 1
@@ -636,10 +604,8 @@ async function loadProjects() {
             const projectImage =
                 document.createElement("div");
 
-
             projectImage.className =
                 "project-image";
-
 
             if (index === 0) {
 
@@ -662,13 +628,78 @@ async function loadProjects() {
             }
 
 
+            // ------------------------------------------------
+            // STUDYTRACK IMAGE
+            // ------------------------------------------------
+            // Load the local image for StudyTrack.
+            // Other projects retain their existing backgrounds.
+            // ------------------------------------------------
+
+            const projectSlug =
+                String(project.slug || "")
+                    .trim()
+                    .toLowerCase();
+
+            const projectTitleNormalized =
+                String(project.title || "")
+                    .trim()
+                    .toLowerCase();
+
+            const isStudyTrack =
+                projectSlug === "studytrack" ||
+                projectTitleNormalized === "studytrack";
+
+            if (isStudyTrack) {
+
+                const thumbnail =
+                    document.createElement("img");
+
+                thumbnail.className =
+                    "project-thumbnail";
+
+                thumbnail.src =
+                    "images/studytrack.jpeg";
+
+                thumbnail.alt =
+                    "StudyTrack student productivity system";
+
+                thumbnail.loading =
+                    "lazy";
+
+                thumbnail.onerror = () => {
+
+                    console.error(
+                        "StudyTrack image could not be loaded. Check public/images/studytrack.jpeg."
+                    );
+
+                    thumbnail.remove();
+
+                    projectImage.classList.remove(
+                        "has-project-image"
+                    );
+
+                };
+
+                projectImage.classList.add(
+                    "has-project-image"
+                );
+
+                projectImage.appendChild(
+                    thumbnail
+                );
+
+            }
+
+
+            // ------------------------------------------------
+            // PROJECT NUMBER
+            // ------------------------------------------------
+
             const projectNumber =
                 document.createElement("span");
 
-
             projectNumber.textContent =
                 String(index + 1).padStart(2, "0");
-
 
             projectImage.appendChild(
                 projectNumber
@@ -682,7 +713,6 @@ async function loadProjects() {
             const projectContent =
                 document.createElement("div");
 
-
             projectContent.className =
                 "project-content";
 
@@ -694,13 +724,11 @@ async function loadProjects() {
             const projectCategory =
                 document.createElement("p");
 
-
             projectCategory.className =
                 "project-category";
 
-
             projectCategory.textContent =
-                project.featured
+                Number(project.featured) === 1
                     ? "Featured Project"
                     : "Web Development";
 
@@ -711,7 +739,6 @@ async function loadProjects() {
 
             const projectTitle =
                 document.createElement("h3");
-
 
             projectTitle.textContent =
                 project.title || "Untitled Project";
@@ -724,7 +751,6 @@ async function loadProjects() {
             const projectDescription =
                 document.createElement("p");
 
-
             projectDescription.textContent =
                 project.description || "";
 
@@ -736,10 +762,8 @@ async function loadProjects() {
             const projectTech =
                 document.createElement("div");
 
-
             projectTech.className =
                 "project-tech";
-
 
             if (project.technologies) {
 
@@ -755,19 +779,14 @@ async function loadProjects() {
                                 technology.length > 0
                         );
 
-
                 technologies.forEach(
                     (technology) => {
 
                         const technologyTag =
-                            document.createElement(
-                                "span"
-                            );
-
+                            document.createElement("span");
 
                         technologyTag.textContent =
                             technology;
-
 
                         projectTech.appendChild(
                             technologyTag
@@ -786,7 +805,6 @@ async function loadProjects() {
             const projectLinks =
                 document.createElement("div");
 
-
             projectLinks.className =
                 "project-links";
 
@@ -799,7 +817,6 @@ async function loadProjects() {
 
                 const githubLink =
                     document.createElement("a");
-
 
                 githubLink.href =
                     project.github_url;
@@ -815,7 +832,6 @@ async function loadProjects() {
 
                 githubLink.textContent =
                     "GitHub ↗";
-
 
                 projectLinks.appendChild(
                     githubLink
@@ -833,7 +849,6 @@ async function loadProjects() {
                 const liveLink =
                     document.createElement("a");
 
-
                 liveLink.href =
                     project.live_url;
 
@@ -848,7 +863,6 @@ async function loadProjects() {
 
                 liveLink.textContent =
                     "View Project ↗";
-
 
                 projectLinks.appendChild(
                     liveLink
@@ -881,7 +895,6 @@ async function loadProjects() {
                 projectLinks
             );
 
-
             projectCard.appendChild(
                 projectImage
             );
@@ -889,7 +902,6 @@ async function loadProjects() {
             projectCard.appendChild(
                 projectContent
             );
-
 
             projectsContainer.appendChild(
                 projectCard
@@ -901,6 +913,16 @@ async function loadProjects() {
         console.log(
             `${projects.length} project(s) loaded successfully from database.`
         );
+
+
+        // ----------------------------------------------------
+        // OBSERVE NEWLY CREATED PROJECT CARDS
+        // ----------------------------------------------------
+        // The project cards are created after the initial page
+        // loads, so register them with the scroll reveal observer.
+        // ----------------------------------------------------
+
+        observeNewProjectCards();
 
 
     } catch (error) {
@@ -940,12 +962,10 @@ if (
     let ringX = 0;
     let ringY = 0;
 
-
     document.addEventListener("mousemove", (event) => {
 
         mouseX = event.clientX;
         mouseY = event.clientY;
-
 
         cursorDot.style.left =
             `${mouseX}px`;
@@ -964,20 +984,17 @@ if (
         ringY +=
             (mouseY - ringY) * 0.15;
 
-
         cursorRing.style.left =
             `${ringX}px`;
 
         cursorRing.style.top =
             `${ringY}px`;
 
-
         requestAnimationFrame(
             animateCursor
         );
 
     }
-
 
     animateCursor();
 
@@ -986,7 +1003,6 @@ if (
         document.querySelectorAll(
             "a, button, input, textarea"
         );
-
 
     interactiveElements.forEach((element) => {
 
@@ -1000,7 +1016,6 @@ if (
 
             }
         );
-
 
         element.addEventListener(
             "mouseleave",
@@ -1030,7 +1045,6 @@ if (contactForm) {
 
             event.preventDefault();
 
-
             if (formStatus) {
 
                 formStatus.textContent =
@@ -1038,10 +1052,8 @@ if (contactForm) {
 
             }
 
-
             const formData =
                 new FormData(contactForm);
-
 
             const messageData = {
 
@@ -1058,7 +1070,6 @@ if (contactForm) {
                     formData.get("message")
 
             };
-
 
             try {
 
@@ -1082,10 +1093,8 @@ if (contactForm) {
                         }
                     );
 
-
                 const result =
                     await response.json();
-
 
                 if (!response.ok) {
 
@@ -1096,7 +1105,6 @@ if (contactForm) {
 
                 }
 
-
                 if (formStatus) {
 
                     formStatus.textContent =
@@ -1104,9 +1112,7 @@ if (contactForm) {
 
                 }
 
-
                 contactForm.reset();
-
 
             } catch (error) {
 
@@ -1114,7 +1120,6 @@ if (contactForm) {
                     "Contact form error:",
                     error
                 );
-
 
                 if (formStatus) {
 
@@ -1135,13 +1140,15 @@ if (contactForm) {
 // 11. SIMPLE SCROLL REVEAL
 // ============================================================
 
+let scrollRevealObserver = null;
+
+
 function initializeScrollReveal() {
 
     const revealElements =
         document.querySelectorAll(
             ".section-heading, .skill-card, .project-card, .timeline-item"
         );
-
 
     if (
         !revealElements.length ||
@@ -1152,39 +1159,48 @@ function initializeScrollReveal() {
 
     }
 
+    if (!scrollRevealObserver) {
 
-    const observer =
-        new IntersectionObserver(
-            (entries, observerInstance) => {
+        scrollRevealObserver =
+            new IntersectionObserver(
+                (entries, observerInstance) => {
 
-                entries.forEach((entry) => {
+                    entries.forEach((entry) => {
 
-                    if (
-                        entry.isIntersecting
-                    ) {
+                        if (entry.isIntersecting) {
 
-                        entry.target.style.opacity =
-                            "1";
+                            entry.target.style.opacity =
+                                "1";
 
-                        entry.target.style.transform =
-                            "translateY(0)";
+                            entry.target.style.transform =
+                                "translateY(0)";
 
-                        observerInstance.unobserve(
-                            entry.target
-                        );
+                            observerInstance.unobserve(
+                                entry.target
+                            );
 
-                    }
+                        }
 
-                });
+                    });
 
-            },
-            {
-                threshold: 0.12
-            }
-        );
+                },
+                {
+                    threshold: 0.12
+                }
+            );
 
+    }
 
     revealElements.forEach((element) => {
+
+        if (
+            element.dataset.scrollRevealInitialized === "true"
+        ) {
+            return;
+        }
+
+        element.dataset.scrollRevealInitialized =
+            "true";
 
         element.style.opacity = "0";
 
@@ -1194,8 +1210,56 @@ function initializeScrollReveal() {
         element.style.transition =
             "opacity 0.7s ease, transform 0.7s ease";
 
+        scrollRevealObserver.observe(element);
 
-        observer.observe(element);
+    });
+
+}
+
+
+// ============================================================
+// 12. OBSERVE NEWLY CREATED PROJECT CARDS
+// ============================================================
+
+function observeNewProjectCards() {
+
+    if (!("IntersectionObserver" in window)) {
+        return;
+    }
+
+    if (!scrollRevealObserver) {
+
+        initializeScrollReveal();
+
+        return;
+
+    }
+
+    const projectCards =
+        document.querySelectorAll(
+            ".project-card"
+        );
+
+    projectCards.forEach((card) => {
+
+        if (
+            card.dataset.scrollRevealInitialized === "true"
+        ) {
+            return;
+        }
+
+        card.dataset.scrollRevealInitialized =
+            "true";
+
+        card.style.opacity = "0";
+
+        card.style.transform =
+            "translateY(25px)";
+
+        card.style.transition =
+            "opacity 0.7s ease, transform 0.7s ease";
+
+        scrollRevealObserver.observe(card);
 
     });
 
@@ -1206,7 +1270,7 @@ initializeScrollReveal();
 
 
 // ============================================================
-// 12. CONSOLE MESSAGE
+// 13. CONSOLE MESSAGE
 // ============================================================
 
 console.log(
